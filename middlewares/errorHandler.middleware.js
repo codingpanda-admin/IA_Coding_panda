@@ -1,5 +1,5 @@
-// Manejador para rutas no encontradas (404)
-exports.notFoundHandler = (req, res) => {
+// middlewares/errorHandler.middleware.js
+const notFoundHandler = (req, res) => {
     res.status(404).json({
         success: false,
         error: `Ruta no encontrada: ${req.method} ${req.url}`,
@@ -16,8 +16,7 @@ exports.notFoundHandler = (req, res) => {
     });
 };
 
-// Manejador global de errores (500)
-exports.globalErrorHandler = (err, req, res, next) => {
+const globalErrorHandler = (err, req, res, next) => {
     console.error(`[ERROR] ${err.message}`);
     console.error(err.stack);
     
@@ -27,3 +26,5 @@ exports.globalErrorHandler = (err, req, res, next) => {
         timestamp: new Date().toISOString()
     });
 };
+
+module.exports = { notFoundHandler, globalErrorHandler };

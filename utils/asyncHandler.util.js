@@ -1,4 +1,5 @@
-exports.asyncHandler = (fn) => (req, res, next) => {
+// utils/asyncHandler.util.js
+const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch((error) => {
         console.error(`[CONTROLLER ERROR] ${error.message}`);
         res.status(500).json({
@@ -8,3 +9,5 @@ exports.asyncHandler = (fn) => (req, res, next) => {
         });
     });
 };
+
+module.exports = asyncHandler;

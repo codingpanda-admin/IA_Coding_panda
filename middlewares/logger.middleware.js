@@ -1,4 +1,5 @@
-exports.requestLogger = (req, res, next) => {
+// middlewares/logger.middleware.js
+const requestLogger = (req, res, next) => {
     const timestamp = new Date().toISOString();
     console.log(`\n[${timestamp}] ${req.method} ${req.url}`);
     
@@ -12,3 +13,5 @@ exports.requestLogger = (req, res, next) => {
     }
     next();
 };
+
+module.exports = requestLogger;

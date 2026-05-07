@@ -1,30 +1,31 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
 
-// Configuraciones y Middlewares
-const corsOptions = require('./config/cors.config');
-const { requestLogger } = require('./middlewares/logger.middleware');
-const { notFoundHandler, globalErrorHandler } = require('./middlewares/error.middleware');
+// Importar utilidades y middlewares
+const initializeDirectories = require('./utils/directory.init');
+const corsMiddleware = require('./middlewares/cors.middleware');
+const requestLogger = require('./middlewares/logger.middleware');
+const { notFoundHandler, globalErrorHandler } = require('./middlewares/errorHandler.middleware');
 
-// Rutas y Utilidades
+// Importar rutas y servicios
 const qwenRoutes = require('./routes/qwen.routes');
-const { initializeUploadDirs } = require('./utils/api.util');
+const DatabaseService = require('./services/database.service');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. Inicializar sistema de carpetas
-initializeUploadDirs();
+// Inicializar carpetas necesarias
+initializeDirectories(__dirname);
 
-// 2. Configuración base y Middlewares
-app.use(cors(corsOptions));
+// Middlewares globales
+app.use(corsMiddleware);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(requestLogger);
 
-// 3. Archivos estáticos
+// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', (req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,27 +33,37 @@ app.use('/uploads', (req, res, next) => {
     next();
 }, express.static(path.join(__dirname, 'uploads')));
 
-// 4. Rutas
+// Rutas
+app.use('/api/qwen', qwenRoutes);
+
 app.get('/', (req, res) => {
     res.json({
         name: 'Qwen AI API',
         version: '1.0.0',
         status: 'running',
-        endpoints: '/api/qwen/health'
+        uploads: '/uploads/*'
     });
 });
-app.use('/api/qwen', qwenRoutes);
 
-// 5. Manejo de Errores (Siempre al final)
+// Manejadores de errores
 app.use(notFoundHandler);
 app.use(globalErrorHandler);
 
-// 6. Iniciar servidor
-app.listen(PORT, '0.0.0.0', () => {
-    console.log('\n========================================');
-    console.log('   QWEN AI API SERVER');
-    console.log('========================================');
-    console.log(`Servidor corriendo en: http://localhost:${PORT}`);
-    console.log(`PUBLIC_URL: ${process.env.PUBLIC_URL || 'http://localhost:' + PORT}`);
-    console.log('========================================\n');
-});
+// Iniciar servidor
+const startServer = async () => {
+    try {
+        await DatabaseService.initialize();
+        console.log('[INIT] Base de datos MySQL conectada y tablas verificadas');
+    } catch (dbError) {
+        console.warn(`[INIT] Advertencia: No se pudo conectar a MySQL: ${dbError.message}`);
+    }
+
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`\n========================================`);
+        console.log(`Servidor corriendo en: http://localhost:${PORT}`);
+        console.log(`Base de datos: ${DatabaseService.isDBConnected() ? 'Conectada' : 'No conectada'}`);
+        console.log(`========================================\n`);
+    });
+};
+
+startServer();

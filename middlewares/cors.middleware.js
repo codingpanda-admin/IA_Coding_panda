@@ -1,3 +1,6 @@
+// middlewares/cors.middleware.js
+const cors = require('cors');
+
 const corsOptions = {
     origin: function (origin, callback) {
         const allowedOrigins = [
@@ -16,7 +19,7 @@ const corsOptions = {
             callback(null, true);
         } else {
             console.log(`[CORS] Origen bloqueado: ${origin}`);
-            callback(null, true); // En producción deberías cambiar el 'true' por un Error
+            callback(null, true); 
         }
     },
     credentials: true,
@@ -24,4 +27,4 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-module.exports = corsOptions;
+module.exports = cors(corsOptions);
