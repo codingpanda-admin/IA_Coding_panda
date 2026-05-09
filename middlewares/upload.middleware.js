@@ -42,7 +42,7 @@ const fileFilter = (req, file, cb) => {
         'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo',
         'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'text/plain', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/octet-stream'
     ];
     
     if (allowedMimes.includes(file.mimetype)) {

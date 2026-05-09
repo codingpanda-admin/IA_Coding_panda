@@ -33,5 +33,10 @@ router.post('/multimodal',
     handleMulterError,
     qwenController.handleMultimodal
 );
-
+router.post(
+  '/upload-excel',
+  upload.single('file'),
+  handleMulterError,
+  qwenController.handleExcelUpload
+);
 module.exports = router;
