@@ -1,5 +1,4 @@
-import { API_URL } from '../config';
-
+import { API_URL } from '../api.config';
 export const sendToBackend = async ({ mode, text, file, conversationHistory, documentContext }) => {
   let endpoint;
   let options = {

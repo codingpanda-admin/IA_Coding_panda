@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { API_URL, MODES } from './config';
+import { API_URL, MODES } from './api.config';
 import { Icon } from './components/Icon';
 import { ChatMessage } from './components/ChatMessage';
 import { sendToBackend } from './services/api';
